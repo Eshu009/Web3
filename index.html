@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Chat App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <div id="chat"></div>
+    <input type="text" id="messageInput">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        var room = prompt("Enter room ID:");
+
+        socket.emit('join_room', {room: room});
+
+        socket.on('message', function(data) {
+            $('#chat').append($('<p>').text(data.msg));
+        });
+
+        function sendMessage() {
+            var message = $('#messageInput').val();
+            socket.emit('send_message', {msg: message, room: room});
+            $('#messageInput').val('');
+        }
+    </script>
+</body>
+</html>
